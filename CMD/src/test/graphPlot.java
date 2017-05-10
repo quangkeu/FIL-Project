@@ -31,33 +31,44 @@ import javax.swing.*;
  */
 public class graphPlot extends ApplicationFrame implements ActionListener{
 
-    public static double rate = 0.0;
+    public static double onePacketFlowRate = 0.0;
+    public static double packetIATRate = 0.0;
 
-    private TimeSeries series;
+    private TimeSeries onePacketFlowSeries;
+    private TimeSeries packetIATSeries;
     private Timer timer = new Timer(6000, this);
 
     public graphPlot(final String title) {
         super(title);
-        this.series = new TimeSeries("1-packet Flow Rate");
 
-        final TimeSeriesCollection dataset = new TimeSeriesCollection(this.series);
-        final JFreeChart chart = createChart(dataset);
+        this.onePacketFlowSeries = new TimeSeries("1-packet Flow Rate");
+        this.packetIATSeries = new TimeSeries("Packet IAT < 0.2ms Rate");
+
+        final TimeSeriesCollection onePacketFlowDataset = new TimeSeriesCollection(this.onePacketFlowSeries);
+        final TimeSeriesCollection packetIATDataset = new TimeSeriesCollection(this.packetIATSeries);
+
+        final JFreeChart onePacketFlowChart = createChart(onePacketFlowDataset, "1-packet Flow Rate");
+        final JFreeChart packetIATChart = createChart(packetIATDataset, "Packet IAT < 0.2ms Rate");
 
         timer.setInitialDelay(1000);
 
-        chart.setBackgroundPaint(Color.GRAY);
+        onePacketFlowChart.setBackgroundPaint(Color.WHITE);
+        packetIATChart.setBackgroundPaint(Color.WHITE);
 
         //Create JPanel to show graph on screen
-        final JPanel mainPanel = new JPanel(new BorderLayout());
+        final JPanel mainPanel = new JPanel(new GridLayout(1, 2));
 
         //Create ChartPanel for chart area
-        final ChartPanel chartPanel = new ChartPanel(chart);
+        final ChartPanel onePacketFlowPanel = new ChartPanel(onePacketFlowChart);
+        final ChartPanel packetIATPanel = new ChartPanel(packetIATChart);
 
         //Add chartPanel to mainPanel
-        mainPanel.add(chartPanel);
+        mainPanel.add(onePacketFlowPanel);
+        mainPanel.add(packetIATPanel);
 
         //Set size
-        chartPanel.setPreferredSize(new Dimension(800, 600));
+        onePacketFlowPanel.setPreferredSize(new Dimension(600, 400));
+        packetIATPanel.setPreferredSize(new Dimension(600, 400));
 
         setContentPane(mainPanel);
 
@@ -71,9 +82,9 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
     @return A JFreeChart sample chart
      */
 
-    private JFreeChart createChart(final XYDataset dataset) {
+    private JFreeChart createChart(final XYDataset dataset, String title) {
         final JFreeChart result = ChartFactory.createTimeSeriesChart(
-                "1-packet Flow Rate",
+                title,
                 "Seconds",
                 "Percentage",
                 dataset,
@@ -108,8 +119,12 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Second currentSecond = new Second();
-        this.series.add(currentSecond, this.rate*100);
+        this.onePacketFlowSeries.add(currentSecond, this.onePacketFlowRate*100);
+        this.packetIATSeries.add(currentSecond, this.packetIATRate*100);
 
-        System.out.println("Current time = " + currentSecond.toString() + ", 1-packet Flow Rate = " + this.rate*100);
+        System.out.println("------------------------");
+        System.out.println("Current time = " + currentSecond.toString() + ", 1-packet Flow Rate = " + this.onePacketFlowRate*100);
+        System.out.println("Current time = " + currentSecond.toString() + ", Packet IAT < 0.2ms Rate = " + this.packetIATRate*100);
+        System.out.println("------------------------");
     }
 }

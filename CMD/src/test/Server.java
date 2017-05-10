@@ -21,7 +21,8 @@ public class Server {
             Item item;
             try{
                 while((item = (Item) in.readObject()) != null) {
-                    plot.rate = Double.parseDouble((String) item.getFieldValue(Parameter.ONE_PKT_ON_FLOW.toString()));
+                    plot.onePacketFlowRate = Double.parseDouble((String) item.getFieldValue(Parameter.ONE_PKT_ON_FLOW.toString()));
+                    plot.packetIATRate = Double.parseDouble((String) item.getFieldValue(Parameter.FLOW_IAT_02.toString()));
 
                     System.out.println("-------------------------------------");
                     System.out.println(" Number Flow Received: " + item.getFieldValue(Parameter.NUMBER_FLOW.toString()));
@@ -48,7 +49,7 @@ public class Server {
 
         //Graph plotting
         System.out.println("[+] Graph Plotting");
-        plot = new graphPlot("1-packet Flow Rate");
+        plot = new graphPlot("Statistics");
         plot.pack();
         RefineryUtilities.centerFrameOnScreen(plot);
         plot.setVisible(true);
