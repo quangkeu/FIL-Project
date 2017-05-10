@@ -1,5 +1,9 @@
 package test;
 
+/**
+ * Created by quang on May 9 2017
+ */
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

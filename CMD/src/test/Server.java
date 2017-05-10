@@ -23,6 +23,7 @@ public class Server {
                 while((item = (Item) in.readObject()) != null) {
                     plot.rate = Double.parseDouble((String) item.getFieldValue(Parameter.ONE_PKT_ON_FLOW.toString()));
 
+                    System.out.println("-------------------------------------");
                     System.out.println(" Number Flow Received: " + item.getFieldValue(Parameter.NUMBER_FLOW.toString()));
                     System.out.println(" % Flow IAT 0-0,2 ms Received: " + item.getFieldValue(Parameter.FLOW_IAT_02.toString()));
                     System.out.println(" % Flow IAT 0,2-0,4 ms Received: " + item.getFieldValue(Parameter.FLOW_IAT_24.toString()));
@@ -31,6 +32,7 @@ public class Server {
                     System.out.println("% flow has 2 pkt Received: " +  item.getFieldValue(Parameter.TWO_PKT_ON_FLOW.toString()));
                     System.out.println("% flow has 3 pkt Received: " +  item.getFieldValue(Parameter.THREE_PKT_ON_FLOW.toString()));
                     System.out.println(" Total byte Received: " + item.getFieldValue(Parameter.BYTE_COUNT.toString()));
+                    System.out.println("-------------------------------------");
                 }
             } catch (ClassNotFoundException e) {
                 System.out.println("Invalid data from client!");
@@ -45,13 +47,15 @@ public class Server {
     public static void main(String[] args) {
 
         //Graph plotting
+        System.out.println("[+] Graph Plotting");
         plot = new graphPlot("1-packet Flow Rate");
         plot.pack();
         RefineryUtilities.centerFrameOnScreen(plot);
         plot.setVisible(true);
 
-        try{
+        try {
             ServerSocket servSocket = new ServerSocket(DEFAULT_PORT);
+            System.out.println("[+] Starting server socket at " + DEFAULT_PORT);
             while (true){
                 try{
                     Socket connSocket = servSocket.accept();
