@@ -22,13 +22,10 @@ import org.jfree.ui.RefineryUtilities;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.*;
 
-
-/**
- * Created by quang on 5/9/2017.
- */
 public class graphPlot extends ApplicationFrame implements ActionListener{
 
     public static double onePacketFlowRate = 0.0;
@@ -36,7 +33,7 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
 
     private TimeSeries onePacketFlowSeries;
     private TimeSeries packetIATSeries;
-    private Timer timer = new Timer(6000, this);
+    private Timer sixSecTimer = new Timer(6000, this);
 
     public graphPlot(final String title) {
         super(title);
@@ -47,16 +44,16 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
         final TimeSeriesCollection onePacketFlowDataset = new TimeSeriesCollection(this.onePacketFlowSeries);
         final TimeSeriesCollection packetIATDataset = new TimeSeriesCollection(this.packetIATSeries);
 
-        final JFreeChart onePacketFlowChart = createChart(onePacketFlowDataset, "1-packet Flow Rate");
-        final JFreeChart packetIATChart = createChart(packetIATDataset, "Packet IAT < 0.2ms Rate");
+        final JFreeChart onePacketFlowChart = createChart(onePacketFlowDataset, "1-packet Flow Rate","Percentage", 100.0);
+        final JFreeChart packetIATChart = createChart(packetIATDataset, "Packet IAT < 0.2ms Rate", "Percentage", 100.0);
 
-        timer.setInitialDelay(1000);
+        sixSecTimer.setInitialDelay(1000);
 
         onePacketFlowChart.setBackgroundPaint(Color.WHITE);
         packetIATChart.setBackgroundPaint(Color.WHITE);
 
         //Create JPanel to show graph on screen
-        final JPanel mainPanel = new JPanel(new GridLayout(1, 2));
+        final JPanel mainPanel = new JPanel(new GridLayout(1, 3));
 
         //Create ChartPanel for chart area
         final ChartPanel onePacketFlowPanel = new ChartPanel(onePacketFlowChart);
@@ -67,14 +64,16 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
         mainPanel.add(packetIATPanel);
 
         //Set size
-        onePacketFlowPanel.setPreferredSize(new Dimension(600, 400));
-        packetIATPanel.setPreferredSize(new Dimension(600, 400));
+        onePacketFlowPanel.setPreferredSize(new Dimension(500, 400));
+        packetIATPanel.setPreferredSize(new Dimension(500, 400));
 
         setContentPane(mainPanel);
 
-        timer.start();
+        sixSecTimer.start();
+
 
     }
+
 
     /*
     Create a sample chart
@@ -82,11 +81,11 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
     @return A JFreeChart sample chart
      */
 
-    private JFreeChart createChart(final XYDataset dataset, String title) {
+    private JFreeChart createChart(final XYDataset dataset, String title, String valueAxisLabel, double upper) {
         final JFreeChart result = ChartFactory.createTimeSeriesChart(
                 title,
                 "Seconds",
-                "Percentage",
+                valueAxisLabel,
                 dataset,
                 true,
                 true,
@@ -110,7 +109,7 @@ public class graphPlot extends ApplicationFrame implements ActionListener{
         xaxis.setVerticalTickLabels(true);
 
         ValueAxis yaxis = plot.getRangeAxis();
-        yaxis.setRange(0.0, 100.0);
+        yaxis.setRange(0.0, upper);
 
         return result;
     }
